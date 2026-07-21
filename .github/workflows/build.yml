@@ -45,7 +45,7 @@ jobs:
       - name: Set up Cygwin
         uses: egor-tensin/setup-cygwin@v4
         with:
-          packages: autoconf automake libtool gcc-g++ gcc-core make openssl
+          packages: autoconf automake libtool gcc-g++ gcc-core make openssl pthread
 
       - run: |
           echo $(pwd) && \
