@@ -45,7 +45,7 @@ jobs:
       - name: Set up Cygwin
         uses: egor-tensin/setup-cygwin@v4
         with:
-          packages: autoconf automake libtool gcc-g++ gcc-core make openssl cygwin-devel
+          packages: autoconf automake libtool gcc-g++ gcc-core make openssl cygwin-devel pkg-config openssl-devel
 
       - run: |
           echo $(pwd) && \
@@ -54,8 +54,9 @@ jobs:
           ls && \
           g++ --version && \
           mkdir installation && \
+          ./bootstrap.sh && \
           ./configure --help && \
-          ./configure LDFLAGS="-no-undefined" && \
+          ./configure && \
           make && \
           make prefix="$(pwd)/installation" install
 
