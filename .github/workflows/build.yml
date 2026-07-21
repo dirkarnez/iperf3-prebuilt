@@ -25,7 +25,8 @@ jobs:
       #   shell: cmd
       #   run: git clone --recurse-submodules https://dev.gnupg.org/source/libgpg-error.git && cd libgpg-error && git checkout ${{ env.tagName }}
       
-      - run: git config --global core.autocrlf false
+      - shell: cmd
+        run: git config --global core.autocrlf false
       
       - uses: actions/checkout@v6
         with:
