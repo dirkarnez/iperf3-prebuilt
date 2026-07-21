@@ -11,7 +11,13 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [ windows-latest ] # , ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
+    env:
+      libraryName: iperf3
+      tagName: 3.2
     defaults:
       run:
         shell: C:\tools\cygwin\bin\bash.exe --login -o igncr '{0}'
@@ -31,8 +37,8 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: esnet/iperf
-          ref: 3.21 # ${{ env.tagName }}
-          path: iperf3 # ${{ env.libraryName }}
+          ref: ${{ env.tagName }}
+          path: ${{ env.libraryName }}
           submodules: true
           fetch-depth: 0 # <-- clone with complete history
           
@@ -44,7 +50,7 @@ jobs:
       - run: |
           echo $(pwd) && \
           ls && \
-          cd '${{ github.workspace }}/iperf3' && \
+          cd '${{ github.workspace }}/${{ env.libraryName }}' && \
           ls && \
           g++ --version && \
           mkdir installation && \
@@ -54,10 +60,10 @@ jobs:
           make prefix="$(pwd)/installation" install
 
       - shell: cmd
-        run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "iperf3\installation\bin"
+        run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "${{ env.libraryName }}\installation\bin"
         
       - run: |
-          cd iperf3 && \
+          cd ${{ env.libraryName }} && \
           cd installation && \
           ls -R
         
@@ -65,52 +71,12 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          directory: "iperf3/installation"
-          filename: "iperf3-${{ github.ref_name }}-cygwin.zip"
+          directory: "${{ env.libraryName }}/installation"
+          filename: "${{ env.libraryName }}-${{ github.ref_name }}-cygwin.zip"
         
       - name: Release prebuilt
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "iperf3/installation/iperf3-${{ github.ref_name }}-cygwin.zip"
-          allowUpdates: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-
-
-
-
-
-
-
-
-
-
-          
-
-                  
-              src/iperf3
-      - run: |
-          echo $(pwd) && \
-          ls && \
-          cd '${{ github.workspace }}' && \
-          ls && \
-          g++ --version && \
-          mkdir build && \
-          gcc -static main.c -o build/main.exe
-
-      - shell: cmd
-        run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "build"
-        
-      - name: Archive Release
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          directory: "build"
-          filename: "helloworld-${{ github.ref_name }}-cygwin.zip"
-        
-      - name: Release prebuilt
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "build/helloworld-${{ github.ref_name }}-cygwin.zip"
+          artifacts: "${{ env.libraryName }}/installation/${{ env.libraryName }}-${{ github.ref_name }}-cygwin.zip"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
