@@ -1,0 +1,110 @@
+name: cygwin-action-workflow
+on:
+  push:
+    # # Sequence of patterns matched against refs/tags
+    # tags:
+    #   - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    #   - 'c*'
+      
+permissions:
+    contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: C:\tools\cygwin\bin\bash.exe --login -o igncr '{0}'
+    # env:
+    #   libraryName: libgpg-error
+    #   installationPath: libgpg-error-installation
+    #   mingwTargetZip: libgpg-error-${{ github.ref_name }}-mingw64-x86_64-posix-seh-rev0-8.1.0.zip
+    steps:
+      #       tagName: libgpg-error-1.47
+      # - name: git clone
+      #   shell: cmd
+      #   run: git clone --recurse-submodules https://dev.gnupg.org/source/libgpg-error.git && cd libgpg-error && git checkout ${{ env.tagName }}
+      - uses: actions/checkout@v6
+        with:
+          repository: esnet/iperf
+          ref: 3.21 # ${{ env.tagName }}
+          path: iperf3 # ${{ env.libraryName }}
+          submodules: true
+          fetch-depth: 0 # <-- clone with complete history
+          
+      - name: Set up Cygwin
+        uses: egor-tensin/setup-cygwin@v4
+        with:
+          packages: autoconf automake libtool gcc-g++ gcc-core make
+
+      - run: |
+          echo $(pwd) && \
+          ls && \
+          cd '${{ github.workspace }}/iperf3' && \
+          ls && \
+          g++ --version && \
+          mkdir installation && \
+          ./configure --help && \
+          ./configure && \
+          make && \
+          make prefix="$(pwd)/installation" install
+
+      - shell: cmd
+        run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "iperf3\installation\bin"
+        
+      - shell: cmd
+        run: cd iperf3 && cd installation && dir
+        
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: "iperf3/installation"
+          filename: "iperf3-${{ github.ref_name }}-cygwin.zip"
+        
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "iperf3/installation/iperf3-${{ github.ref_name }}-cygwin.zip"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+
+
+
+
+
+
+
+
+          
+
+                  
+              src/iperf3
+      - run: |
+          echo $(pwd) && \
+          ls && \
+          cd '${{ github.workspace }}' && \
+          ls && \
+          g++ --version && \
+          mkdir build && \
+          gcc -static main.c -o build/main.exe
+
+      - shell: cmd
+        run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "build"
+        
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: "build"
+          filename: "helloworld-${{ github.ref_name }}-cygwin.zip"
+        
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/helloworld-${{ github.ref_name }}-cygwin.zip"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
