@@ -61,11 +61,11 @@ jobs:
 
       - shell: cmd
         run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "${{ env.libraryName }}\installation\bin"
-        
-      - run: |
-          cd ${{ env.libraryName }} && \
-          cd installation && \
-          ls -R
+
+      - shell: cmd
+        run: |
+          cd "${{ env.libraryName }}\installation" &&^
+          dir /S
         
       - name: Archive Release
         uses: thedoctor0/zip-release@master
