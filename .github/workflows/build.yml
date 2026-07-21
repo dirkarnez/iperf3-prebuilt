@@ -24,6 +24,10 @@ jobs:
       # - name: git clone
       #   shell: cmd
       #   run: git clone --recurse-submodules https://dev.gnupg.org/source/libgpg-error.git && cd libgpg-error && git checkout ${{ env.tagName }}
+      - name: 設置 Git 避免換行轉換
+        run: |
+          git config --global core.autocrlf false
+      
       - uses: actions/checkout@v6
         with:
           repository: esnet/iperf
