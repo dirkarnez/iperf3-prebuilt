@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       libraryName: iperf3
-      tagName: 3.2
+      tagName: 3.21
     defaults:
       run:
         shell: C:\tools\cygwin\bin\bash.exe --login -o igncr '{0}'
