@@ -46,7 +46,8 @@ jobs:
         uses: egor-tensin/setup-cygwin@v4
         with:
           packages: autoconf automake libtool gcc-g++ gcc-core make openssl cygwin-devel pkg-config openssl-devel
-
+      
+    # ./bootstrap.sh && \
       - run: |
           echo $(pwd) && \
           ls && \
@@ -54,11 +55,10 @@ jobs:
           ls && \
           g++ --version && \
           mkdir installation && \
-          ./bootstrap.sh && \
           ./configure --help && \
-          ./configure && \
-          make && \
-          make prefix="$(pwd)/installation" install
+          ./configure LDFLAGS="-Wl,-no-undefined" && \
+          make LDFLAGS="-no-undefined" && \
+          make LDFLAGS="-no-undefined" prefix="$(pwd)/installation" install
 
       - shell: cmd
         run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "${{ env.libraryName }}\installation\bin"
