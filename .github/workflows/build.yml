@@ -45,7 +45,7 @@ jobs:
       - name: Set up Cygwin
         uses: egor-tensin/setup-cygwin@v4
         with:
-          packages: autoconf automake libtool gcc-g++ gcc-core make openssl cygwin-devel pkg-config openssl-devel
+          packages: autoconf automake libtool gcc-g++ gcc-core make openssl libssl-devel cygwin-devel pkg-config openssl-devel
       
     # ./bootstrap.sh && \
       - run: |
@@ -62,6 +62,12 @@ jobs:
 
       - shell: cmd
         run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "${{ env.libraryName }}\installation\bin"
+          
+      - shell: cmd
+        run: xcopy /H /Y /C "${{ github.workspace }}\${{ env.libraryName }}\examples\mic.exe" "${{ env.libraryName }}\installation\bin"
+        
+      - shell: cmd
+        run: xcopy /H /Y /C "${{ github.workspace }}\${{ env.libraryName }}\examples\mis.exe" "${{ env.libraryName }}\installation\bin"
 
       - shell: cmd
         run: |
