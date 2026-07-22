@@ -56,9 +56,9 @@ jobs:
           g++ --version && \
           mkdir installation && \
           ./configure --help && \
-          ./configure LDFLAGS="-Wl,-no-undefined" && \
+          ./configure LDFLAGS="-Wl,-no-undefined" --prefix="$(pwd)/installation" && \
           make LDFLAGS="-no-undefined" && \
-          make LDFLAGS="-no-undefined" prefix="$(pwd)/installation" install
+          make LDFLAGS="-no-undefined" install
 
       - shell: cmd
         run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "${{ env.libraryName }}\installation\bin"
