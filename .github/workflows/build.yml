@@ -46,11 +46,11 @@ jobs:
         uses: egor-tensin/setup-cygwin@v4
         with:
           packages: autoconf automake libtool gcc-g++ gcc-core make openssl libssl-devel cygwin-devel pkg-config openssl-devel
-      
     # 
     #  LDFLAGS="-Wl,-no-undefined"
-      - working-directory: ${{ env.libraryName }}
-        run: |
+      - run: |
+          cd '${{ env.libraryName }}' && \
+          ls && \
           g++ --version && \
           mkdir installation && \
           ./bootstrap.sh && \
