@@ -47,22 +47,27 @@ jobs:
         with:
           packages: autoconf automake libtool gcc-g++ gcc-core make openssl libssl-devel cygwin-devel pkg-config openssl-devel
       
-    # ./bootstrap.sh && \
-      - run: |
-          echo $(pwd) && \
-          ls && \
-          cd '${{ github.workspace }}/${{ env.libraryName }}' && \
-          ls && \
+    # 
+    #  LDFLAGS="-Wl,-no-undefined"
+      - working-directory: ${{ env.libraryName }}
+        run: |
           g++ --version && \
           mkdir installation && \
+          ./bootstrap.sh && \
           ./configure --help && \
-          ./configure LDFLAGS="-Wl,-no-undefined" --prefix="$(pwd)/installation" && \
-          make LDFLAGS="-no-undefined" && \
-          make LDFLAGS="-no-undefined" install
+          ./configure --prefix="$(pwd)/installation" && \
+          make && \
+          make install
 
       - shell: cmd
         run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygwin1.dll" "${{ env.libraryName }}\installation\bin"
-          
+
+      - shell: cmd
+        run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygcrypto-3.dll" "${{ env.libraryName }}\installation\bin"
+
+      - shell: cmd
+        run: xcopy /H /Y /C "C:\tools\cygwin\bin\cygz.dll" "${{ env.libraryName }}\installation\bin"
+        
       - shell: cmd
         run: xcopy /H /Y /C "${{ github.workspace }}\${{ env.libraryName }}\examples\mic.exe" "${{ env.libraryName }}\installation\bin"
         
