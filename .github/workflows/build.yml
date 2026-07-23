@@ -57,7 +57,7 @@ jobs:
           mkdir installation && \
           ./bootstrap.sh && \
           ./configure --help && \
-          ./configure --prefix="$(pwd)/installation" && \
+          ./configure --enable-static-bin --prefix="$(pwd)/installation" && \
           make && \
           make install
 
