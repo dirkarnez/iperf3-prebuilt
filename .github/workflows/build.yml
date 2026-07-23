@@ -49,7 +49,9 @@ jobs:
     # 
     #  LDFLAGS="-Wl,-no-undefined"
       - run: |
-          cd '${{ env.libraryName }}' && \
+          echo $(pwd) && \
+          ls && \
+          cd '${{ github.workspace }}/${{ env.libraryName }}' && \
           ls && \
           g++ --version && \
           mkdir installation && \
